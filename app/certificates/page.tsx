@@ -19,7 +19,8 @@ export default function CertificatesPage() {
   const [certificates, setCertificates] = useState<Certificate[]>([]);
 
   useEffect(() => {
-    fetch('/api/certificates')
+    // 从本地 SQLite API 获取证书数据
+    fetch('/api/certificates-local')
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 0) {

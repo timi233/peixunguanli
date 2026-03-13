@@ -11,20 +11,39 @@ export default function DashboardPage() {
   const [expiringCerts, setExpiringCerts] = useState<any[]>([]);
 
   useEffect(() => {
+    // 使用本地 SQLite API
     Promise.all([
-      fetch('/api/stats').then(res => res.json()),
-      fetch('/api/certificates/expiring').then(res => res.json()),
+      fetch('/api/courses-local').then(res => res.json()),
+      fetch('/api/tasks').then(res => res.json()),
+      fetch('/api/certificates').then(res => res.json()),
     ])
-      .then(([statsData, certsData]) => {
-        if (statsData.code === 0) {
-          setStats(statsData.data);
-        }
-        if (certsData.code === 0) {
-          setExpiringCerts(certsData.data);
-        }
+      .then(([coursesRes, tasksRes, certsRes]) => {
+        const courses = coursesRes.code === 0 ? coursesRes.data : [];
+        const tasks = tasksRes.code === 0 ? tasksRes.data : [];
+        const certs = certsRes.code === 0 ? certsRes.data : [];
+
+        setStats({
+          totalCourses: courses.length,
+          publicCourses: courses.filter((c: any) => c.visibility === '公开').length,
+          authorizedCourses: courses.filter((c: any) => c.visibility === '需授权').length,
+          totalTasks: tasks.length,
+          completedTasks: tasks.filter((t: any) => t.status === '已完成').length,
+          totalEmployees: 3, // TODO: 添加员工 API
+        });
+
+        // 即将到期的证书（30 天内）
+        const now = new Date();
+        const thirtyDaysLater = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const expiring = certs.filter((c: any) => {
+          const expiry = new Date(c.expiryDate);
+          return expiry <= thirtyDaysLater && expiry >= now;
+        });
+        setExpiringCerts(expiring);
+
         setLoading(false);
       })
       .catch((err) => {
+        console.error('加载数据失败:', err);
         setError(err.message);
         setLoading(false);
       });

@@ -11,43 +11,19 @@ export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
 
   useEffect(() => {
-    // TODO: 从 API 获取课程数据
-    // 这里先使用模拟数据
-    setTimeout(() => {
-      setCourses([
-        {
-          record_id: '1',
-          课程名称:'IP-guard 产品了解',
-          所属产品:'IP-guard',
-          课程类型:'理论课',
-          课程时长:120,
-          导师:'许广波',
-          课程难度:'初级',
-          课程状态:'已上线',
-          可见性:'公开',
-          适用岗位:['IP-guard 工程师'],
-          考核类型:'在线考试',
-          课程介绍:'IP-guard 终端安全管理系统产品介绍',
-          创建人:'admin',
-        },
-        {
-          record_id: '2',
-          课程名称:'IP-guard 加密系统切换方案 2024',
-          所属产品:'IP-guard',
-          课程类型:'实操课',
-          课程时长:240,
-          导师:'许广波',
-          课程难度:'高级',
-          课程状态:'已上线',
-          可见性:'需授权',
-          适用岗位:['IP-guard 工程师'],
-          考核类型:'实操考核',
-          课程介绍:'从其他加密系统切换到 IP-guard 的完整方案',
-          创建人:'admin',
-        },
-      ]);
-      setLoading(false);
-    }, 500);
+    // 从本地 SQLite API 获取课程数据
+    fetch('/api/courses-local')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code === 0) {
+          setCourses(data.data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('加载课程失败:', err);
+        setLoading(false);
+      });
   }, []);
 
   const handleEdit = (course: Course) => {

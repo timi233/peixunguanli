@@ -8,8 +8,8 @@ export async function GET(request: Request) {
     const 可见性 = searchParams.get('可见性');
 
     const courses = await getCourses({
-      所属产品：所属产品 || undefined,
-      可见性：可见性 || undefined,
+      所属产品:所属产品 || undefined,
+      可见性:可见性 || undefined,
     });
 
     return NextResponse.json({

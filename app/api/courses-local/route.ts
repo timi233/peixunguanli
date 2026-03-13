@@ -1,6 +1,25 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 
+// 字段映射：英文 -> 中文
+function mapCourse(course: any) {
+  return {
+    record_id: course.record_id,
+    '课程名称': course.name,
+    '所属产品': course.product,
+    '课程类型': course.type,
+    '课程时长': course.duration,
+    '导师': course.instructor,
+    '课程难度': course.level,
+    '课程状态': course.status,
+    '可见性': course.visibility,
+    '适用岗位': course.positions ? course.positions.split(',') : [],
+    '考核类型': course.examType,
+    '课程介绍': course.description,
+    '创建人': course.creator,
+  };
+}
+
 export async function GET() {
   try {
     const courses = await prisma.course.findMany({
@@ -10,7 +29,7 @@ export async function GET() {
     return NextResponse.json({
       code: 0,
       msg: 'success',
-      data: courses,
+      data: courses.map(mapCourse),
     });
   } catch (error: any) {
     console.error('[Courses API] 获取课程失败:', error);
@@ -29,28 +48,29 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
+    // 支持中文和英文字段名
     const course = await prisma.course.create({
       data: {
         record_id: body.record_id || `course_${Date.now()}`,
-        课程名称：body.课程名称，
-        所属产品：body.所属产品，
-        课程类型：body.课程类型，
-        课程时长：body.课程时长，
-        导师：body.导师，
-        课程难度：body.课程难度，
-        课程状态：body.课程状态，
-        可见性：body.可见性，
-        适用岗位：body.适用岗位，
-        考核类型：body.考核类型，
-        课程介绍：body.课程介绍，
-        创建人：body.创建人，
+        name: body.name || body['课程名称'],
+        product: body.product || body['所属产品'],
+        type: body.type || body['课程类型'],
+        duration: body.duration || body['课程时长'],
+        instructor: body.instructor || body['导师'],
+        level: body.level || body['课程难度'],
+        status: body.status || body['课程状态'],
+        visibility: body.visibility || body['可见性'],
+        positions: body.positions ? (Array.isArray(body.positions) ? body.positions.join(',') : body.positions) : (body['适用岗位'] || ''),
+        examType: body.examType || body['考核类型'],
+        description: body.description || body['课程介绍'],
+        creator: body.creator || body['创建人'],
       },
     });
 
     return NextResponse.json({
       code: 0,
       msg: 'success',
-      data: course,
+      data: mapCourse(course),
     });
   } catch (error: any) {
     console.error('[Courses API] 创建课程失败:', error);
