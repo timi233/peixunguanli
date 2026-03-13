@@ -14,11 +14,9 @@
     "react-dom": "^18.3.1",
     "@ant-design/icons": "^5.3.7",
     "@ant-design/nextjs-registry": "^1.0.0",
-    "@lark-base-open/js": "^0.1.0",
     "antd": "^5.17.0",
     "zustand": "^4.5.2",
-    "dayjs": "^1.11.11",
-    "axios": "^1.6.8"
+    "dayjs": "^1.11.11"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
