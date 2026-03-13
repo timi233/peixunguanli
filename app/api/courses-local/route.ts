@@ -44,6 +44,53 @@ export async function GET() {
   }
 }
 
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    
+    if (!body.record_id) {
+      return NextResponse.json(
+        { code: -1, msg: '缺少 record_id', data: null },
+        { status: 400 }
+      );
+    }
+
+    const course = await prisma.course.update({
+      where: { record_id: body.record_id },
+      data: {
+        name: body.name || body['课程名称'],
+        product: body.product || body['所属产品'],
+        type: body.type || body['课程类型'],
+        duration: body.duration || body['课程时长'],
+        instructor: body.instructor || body['导师'],
+        level: body.level || body['课程难度'],
+        status: body.status || body['课程状态'],
+        visibility: body.visibility || body['可见性'],
+        positions: body.positions ? (Array.isArray(body.positions) ? body.positions.join(',') : body.positions) : (body['适用岗位'] || ''),
+        examType: body.examType || body['考核类型'],
+        description: body.description || body['课程介绍'],
+        creator: body.creator || body['创建人'],
+      },
+    });
+
+    return NextResponse.json({
+      code: 0,
+      msg: 'success',
+      data: mapCourse(course),
+    });
+  } catch (error: any) {
+    console.error('[Courses API] 更新课程失败:', error);
+    return NextResponse.json(
+      {
+        code: -1,
+        msg: error.message,
+        data: null,
+      },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
