@@ -98,7 +98,7 @@ export default function DashboardPage() {
           <div>
             {expiringCerts.map((cert: any) => (
               <div key={cert.record_id} style={{ marginBottom: 8 }}>
-                <strong>{cert.证书}</strong> - {cert.关联人员} - 到期：{new Date(cert.有效期至).toLocaleDateString('zh-CN')}
+                <strong>{cert.证书}</strong> - {cert.关联人员} - 到期:{new Date(cert.有效期至).toLocaleDateString('zh-CN')}
               </div>
             ))}
           </div>
@@ -107,8 +107,8 @@ export default function DashboardPage() {
 
       <Card title="系统状态" style={{ marginBottom: 24 }}>
         <p>✅ 系统运行正常</p>
-        <p>📊 数据来源：飞书多维表格</p>
-        <p>👥 员工总数：{stats.totalEmployees}</p>
+        <p>📊 数据来源:飞书多维表格</p>
+        <p>👥 员工总数:{stats.totalEmployees}</p>
       </Card>
     </div>
   );
