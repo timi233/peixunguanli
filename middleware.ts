@@ -12,10 +12,10 @@ import type { NextRequest } from 'next/server';
 const MOCK_USERS: Record<string, any> = {
   'ou_9e782509bc704db45e5db09c5111f3b2': {
     id: 'ou_9e782509bc704db45e5db09c5111f3b2',
-    name: '张健',
+    name: 'zhangjian',
     email: 'zhangjian@example.com',
     role: 'admin',
-    tenantId: '总部',
+    tenantId: 'headquarters', // 使用英文避免 header 错误
   },
 };
 
@@ -40,6 +40,7 @@ export function middleware(request: NextRequest) {
   const user = MOCK_USERS[userId] || MOCK_USERS['ou_9e782509bc704db45e5db09c5111f3b2'];
 
   // 注入用户信息到 request header
+  // 注意：header 值必须是 ASCII 字符
   const response = NextResponse.next();
   response.headers.set('x-user-id', user.id);
   response.headers.set('x-user-role', user.role);
