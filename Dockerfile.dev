@@ -1,10 +1,16 @@
 FROM node:20-alpine
 
+# 安装构建工具（better-sqlite3 需要）
+RUN apk add --no-cache python3 make g++
+
 WORKDIR /app
 
 # 安装依赖
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
+
+# 初始化 Prisma
+RUN npx prisma generate
 
 # 暴露端口
 EXPOSE 3000
