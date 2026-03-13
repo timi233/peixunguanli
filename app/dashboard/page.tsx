@@ -1,33 +1,58 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Row, Col, Card, Table, Tag } from 'antd';
+import { Row, Col, Card, Spin, Alert } from 'antd';
 import { StatsCard } from '@/components/StatsCard';
-import { CourseTable } from '@/components/CourseTable';
-import { Course } from '@/types';
+
+interface Stats {
+  totalCourses: number;
+  publicCourses: number;
+  authorizedCourses: number;
+  totalTasks: number;
+  completedTasks: number;
+  totalEmployees: number;
+}
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    totalCourses: 0,
-    publicCourses: 0,
-    authorizedCourses: 0,
-    totalTasks: 0,
-  });
+  const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
-    // TODO: 从 API 获取数据
-    // 模拟数据
-    setTimeout(() => {
-      setStats({
-        totalCourses: 20,
-        publicCourses: 5,
-        authorizedCourses: 15,
-        totalTasks: 50,
+    fetch('/api/stats')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code === 0) {
+          setStats(data.data);
+        } else {
+          setError(data.msg);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
       });
-      setLoading(false);
-    }, 500);
   }, []);
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: 100 }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (error || !stats) {
+    return (
+      <Alert
+        message="加载失败"
+        description={error || '未知错误'}
+        type="error"
+        showIcon
+      />
+    );
+  }
 
   return (
     <div>
@@ -61,23 +86,17 @@ export default function DashboardPage() {
         <Col span={6}>
           <StatsCard
             title="学习任务"
-            value={stats.totalTasks}
+            value={`${stats.completedTasks}/${stats.totalTasks}`}
             suffix="个"
             color="#722ed1"
           />
         </Col>
       </Row>
 
-      <Card title="最近动态" style={{ marginBottom: 24 }}>
-        <p>欢迎使用公司培训管理系统！</p>
-        <p>系统功能：</p>
-        <ul>
-          <li>✅ 课程管理（公开/授权二级权限）</li>
-          <li>✅ 学习任务管理</li>
-          <li>✅ 跨表关联查询</li>
-          <li>✅ 多租户支持</li>
-          <li>✅ 证书管理（到期预警）</li>
-        </ul>
+      <Card title="系统状态" style={{ marginBottom: 24 }}>
+        <p>✅ 系统运行正常</p>
+        <p>📊 数据来源：飞书多维表格</p>
+        <p>👥 员工总数：{stats.totalEmployees}</p>
       </Card>
     </div>
   );
