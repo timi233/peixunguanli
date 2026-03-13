@@ -183,11 +183,15 @@ async function getAllRecords(
     const queryParams = new URLSearchParams();
     if (params?.pageSize) queryParams.append('page_size', String(params.pageSize));
     if (pageToken) queryParams.append('page_token', pageToken);
-    if (params?.filter) queryParams.append('filter', JSON.stringify(params.filter));
     
-    const data = await request(
-      `/open-apis/bitable/v1/apps/${FEISHU_CONFIG.appToken}/tables/${tableId}/records?${queryParams}`
-    );
+    // 只有在 filter 有实际条件时才添加
+    if (params?.filter && params.filter.conditions && params.filter.conditions.length > 0) {
+      queryParams.append('filter', JSON.stringify(params.filter));
+    }
+    
+    const url = `/open-apis/bitable/v1/apps/${FEISHU_CONFIG.appToken}/tables/${tableId}/records${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+    
+    const data = await request(url);
     
     allItems.push(...data.data.items);
     pageToken = data.data.page_token;
