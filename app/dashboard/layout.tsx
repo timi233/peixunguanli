@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Layout, Menu, theme } from 'antd';
-import { DashboardOutlined, BookOutlined, FileTextOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { DashboardOutlined, BookOutlined, FileTextOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { StatsCard } from '@/components/StatsCard';
@@ -61,6 +61,11 @@ export default function DashboardLayout({
                 key: '/certificates',
                 icon: <ExclamationCircleOutlined />,
                 label: <Link href="/certificates">证书管理</Link>,
+              },
+              {
+                key: '/profile',
+                icon: <UserOutlined />,
+                label: <Link href="/profile">个人中心</Link>,
               },
             ]}
           />
