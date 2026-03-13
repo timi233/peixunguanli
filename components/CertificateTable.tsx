@@ -3,11 +3,11 @@ import { ExclamationCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } f
 
 interface Certificate {
   record_id: string;
-  关联人员：string;
-  证书：string;
-  获得日期：string;
-  有效期至：string;
-  证书状态：'有效' | '即将到期' | '已过期' | '已冻结';
+  关联人员:string;
+  证书:string;
+  获得日期:string;
+  有效期至:string;
+  证书状态:'有效' | '即将到期' | '已过期' | '已冻结';
 }
 
 interface CertificateTableProps {
