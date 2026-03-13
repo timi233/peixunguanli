@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Layout, Menu, theme } from 'antd';
-import { DashboardOutlined, BookOutlined, FileTextOutlined } from '@ant-design/icons';
+import { DashboardOutlined, BookOutlined, FileTextOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { StatsCard } from '@/components/StatsCard';
@@ -56,6 +56,11 @@ export default function DashboardLayout({
                 key: '/tasks',
                 icon: <FileTextOutlined />,
                 label: <Link href="/tasks">学习任务</Link>,
+              },
+              {
+                key: '/certificates',
+                icon: <ExclamationCircleOutlined />,
+                label: <Link href="/certificates">证书管理</Link>,
               },
             ]}
           />

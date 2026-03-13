@@ -207,3 +207,41 @@ export async function getTrainingProjects() {
     ...item.fields,
   }));
 }
+
+// 获取证书列表
+export async function getCertificates() {
+  const tableId = 'tbl8Dy2d1tlgNkXr'; // 证书管理表 ID
+  const data = await request(
+    `/open-apis/bitable/v1/apps/${FEISHU_CONFIG.appToken}/tables/${tableId}/records`,
+    {
+      method: 'GET',
+    }
+  );
+
+  return data.data.items.map((item: any) => ({
+    record_id: item.record_id,
+    ...item.fields,
+  }));
+}
+
+// 获取证书类型列表
+export async function getCertificateTypes() {
+  const tableId = 'tbl_cert_types'; // 证书类型表 ID（需要替换为实际 ID）
+  const data = await request(
+    `/open-apis/bitable/v1/apps/${FEISHU_CONFIG.appToken}/tables/${tableId}/records`,
+    {
+      method: 'GET',
+    }
+  );
+
+  return data.data.items.map((item: any) => ({
+    record_id: item.record_id,
+    ...item.fields,
+  }));
+}
+
+// 创建证书
+export async function createCertificate(fields: Record<string, any>) {
+  const tableId = 'tbl8Dy2d1tlgNkXr'; // 证书管理表 ID
+  return createRecord(tableId, fields);
+}

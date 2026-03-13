@@ -1,31 +1,26 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Row, Col, Card, Spin, Alert } from 'antd';
-import { StatsCard } from '@/components/StatsCard';
-
-interface Stats {
-  totalCourses: number;
-  publicCourses: number;
-  authorizedCourses: number;
-  totalTasks: number;
-  completedTasks: number;
-  totalEmployees: number;
-}
+import { Card, Spin, Alert, Statistic, Row, Col } from 'antd';
+import { ExclamationCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [stats, setStats] = useState<any>(null);
+  const [expiringCerts, setExpiringCerts] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('/api/stats')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.code === 0) {
-          setStats(data.data);
-        } else {
-          setError(data.msg);
+    Promise.all([
+      fetch('/api/stats').then(res => res.json()),
+      fetch('/api/certificates/expiring').then(res => res.json()),
+    ])
+      .then(([statsData, certsData]) => {
+        if (statsData.code === 0) {
+          setStats(statsData.data);
+        }
+        if (certsData.code === 0) {
+          setExpiringCerts(certsData.data);
         }
         setLoading(false);
       })
@@ -60,38 +55,55 @@ export default function DashboardPage() {
 
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col span={6}>
-          <StatsCard
+          <Statistic
             title="总课程数"
             value={stats.totalCourses}
             suffix="门"
-            color="#1890ff"
+            valueStyle={{ color: '#1890ff' }}
           />
         </Col>
         <Col span={6}>
-          <StatsCard
+          <Statistic
             title="公开课程"
             value={stats.publicCourses}
             suffix="门"
-            color="#52c41a"
+            valueStyle={{ color: '#52c41a' }}
           />
         </Col>
         <Col span={6}>
-          <StatsCard
-            title="授权课程"
-            value={stats.authorizedCourses}
-            suffix="门"
-            color="#faad14"
-          />
-        </Col>
-        <Col span={6}>
-          <StatsCard
+          <Statistic
             title="学习任务"
             value={`${stats.completedTasks}/${stats.totalTasks}`}
+            valueStyle={{ color: '#722ed1' }}
+          />
+        </Col>
+        <Col span={6}>
+          <Statistic
+            title="即将到期证书"
+            value={expiringCerts.length}
             suffix="个"
-            color="#722ed1"
+            valueStyle={{ color: expiringCerts.length > 0 ? '#faad14' : '#52c41a' }}
+            prefix={expiringCerts.length > 0 ? <ExclamationCircleOutlined /> : <CheckCircleOutlined />}
           />
         </Col>
       </Row>
+
+      {expiringCerts.length > 0 && (
+        <Card 
+          title="⚠️ 证书到期预警" 
+          style={{ marginBottom: 24 }}
+          bordered={false}
+          bodyStyle={{ padding: '12px 24px' }}
+        >
+          <div>
+            {expiringCerts.map((cert: any) => (
+              <div key={cert.record_id} style={{ marginBottom: 8 }}>
+                <strong>{cert.证书}</strong> - {cert.关联人员} - 到期：{new Date(cert.有效期至).toLocaleDateString('zh-CN')}
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       <Card title="系统状态" style={{ marginBottom: 24 }}>
         <p>✅ 系统运行正常</p>
