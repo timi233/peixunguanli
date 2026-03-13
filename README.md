@@ -29,7 +29,7 @@
 # 启动 Docker 容器
 docker-compose up -d
 
-# 访问 http://localhost:3000
+# 访问 http://localhost:33333
 ```
 
 ### 停止服务
