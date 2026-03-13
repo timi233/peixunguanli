@@ -18,6 +18,51 @@ function mapTask(task: any) {
   };
 }
 
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    
+    if (!body.record_id) {
+      return NextResponse.json(
+        { code: -1, msg: '缺少 record_id', data: null },
+        { status: 400 }
+      );
+    }
+
+    const task = await prisma.task.update({
+      where: { record_id: body.record_id },
+      data: {
+        employeeId: body['关联员工'],
+        project: body['关联培训计划'],
+        courseId: body['关联课程'],
+        description: body['任务说明'],
+        dueDate: body['截止日期'] ? new Date(body['截止日期']) : null,
+        status: body['任务状态'],
+        progress: body['学习进度'],
+        startedAt: body['学习开始时间'] ? new Date(body['学习开始时间']) : null,
+        completedAt: body['学习完成时间'] ? new Date(body['学习完成时间']) : null,
+        result: body['考核结果'],
+      },
+    });
+
+    return NextResponse.json({
+      code: 0,
+      msg: 'success',
+      data: mapTask(task),
+    });
+  } catch (error: any) {
+    console.error('[Tasks API] 更新任务失败:', error);
+    return NextResponse.json(
+      {
+        code: -1,
+        msg: error.message,
+        data: null,
+      },
+      { status: 500 }
+    );
+  }
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);

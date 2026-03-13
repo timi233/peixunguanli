@@ -14,6 +14,47 @@ function mapCertificate(cert: any) {
   };
 }
 
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    
+    if (!body.record_id) {
+      return NextResponse.json(
+        { code: -1, msg: '缺少 record_id', data: null },
+        { status: 400 }
+      );
+    }
+
+    const cert = await prisma.certificate.update({
+      where: { record_id: body.record_id },
+      data: {
+        employeeId: body['关联人员'],
+        certificate: body['证书'],
+        obtainedDate: body['获得日期'] ? new Date(body['获得日期']) : null,
+        expiryDate: body['有效期至'] ? new Date(body['有效期至']) : null,
+        status: body['证书状态'],
+        retrainReq: body['复训要求'],
+      },
+    });
+
+    return NextResponse.json({
+      code: 0,
+      msg: 'success',
+      data: mapCertificate(cert),
+    });
+  } catch (error: any) {
+    console.error('[Certificates API] 更新证书失败:', error);
+    return NextResponse.json(
+      {
+        code: -1,
+        msg: error.message,
+        data: null,
+      },
+      { status: 500 }
+    );
+  }
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
