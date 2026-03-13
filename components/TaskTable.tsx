@@ -15,7 +15,6 @@ export function TaskTable({ tasks, courseMap, employeeMap, onEdit }: TaskTablePr
       dataIndex: '关联课程',
       key: '关联课程',
       render: (value: string, record: Task) => {
-        // 如果有关联数据直接用，否则显示 ID
         const course = courseMap?.[value];
         return course?.['课程名称'] || value;
       },
@@ -25,8 +24,8 @@ export function TaskTable({ tasks, courseMap, employeeMap, onEdit }: TaskTablePr
       dataIndex: '关联员工',
       key: '关联员工',
       render: (value: string, record: Task) => {
-        // 直接显示 ID，后续再优化
-        return value;
+        // 显示员工 ID，后续可接入员工 API 优化
+        return value.replace('emp_', '员工');
       },
     },
     {

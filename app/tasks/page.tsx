@@ -104,6 +104,12 @@ export default function TasksPage() {
     loadTasks();
   };
 
+  // 构建课程映射
+  const courseMap = courses.reduce((acc, course) => {
+    acc[course.record_id] = course;
+    return acc;
+  }, {} as Record<string, any>);
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
@@ -114,7 +120,7 @@ export default function TasksPage() {
       </div>
 
       <Card>
-        <TaskTable tasks={tasks} onEdit={handleEdit} />
+        <TaskTable tasks={tasks} courseMap={courseMap} onEdit={handleEdit} />
       </Card>
 
       <TaskFormModal
