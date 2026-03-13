@@ -226,18 +226,9 @@ export async function getCertificates() {
 
 // 获取证书类型列表
 export async function getCertificateTypes() {
-  const tableId = 'tbl_cert_types'; // 证书类型表 ID（需要替换为实际 ID）
-  const data = await request(
-    `/open-apis/bitable/v1/apps/${FEISHU_CONFIG.appToken}/tables/${tableId}/records`,
-    {
-      method: 'GET',
-    }
-  );
-
-  return data.data.items.map((item: any) => ({
-    record_id: item.record_id,
-    ...item.fields,
-  }));
+  // TODO: 创建证书类型表后替换为实际表 ID
+  // 当前返回空数组
+  return [];
 }
 
 // 创建证书
